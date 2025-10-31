@@ -139,7 +139,12 @@ export function alignBeats(
       );
     }
 
-    const end = cursor + Math.min(fuzzy.length, story.length - cursor);
+    // For the last beat, consume all remaining characters if the fuzzy match
+    // doesn't already do so. This ensures the full story is consumed.
+    const end = isLastBeat && fuzzy.length < remaining
+      ? cursor + remaining
+      : cursor + fuzzy.length;
+    
     results.push({
       title: beat.title,
       script: beat.script,

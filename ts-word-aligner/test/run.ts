@@ -14,11 +14,11 @@ const beatCandidates: StoryBeatCandidate[] = [
   {
     title: "A mysterious gift",
     script:
-      "until she discovered an ancient tree that whispered secrets and offered her a glowing seed",
+      "until she discovered an ancient tree that whispered secrets and offered her a glowing seed.",
   },
   {
     title: "Homecoming",
-    script: "She brought the seed home and planned to plant it",
+    script: "She brought the seed home and planned to plant it.",
   },
 ];
 
