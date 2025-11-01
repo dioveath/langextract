@@ -22,23 +22,39 @@ const beatCandidates: StoryBeatCandidate[] = [
   },
 ];
 
-const results = alignBeats(story, beatCandidates, {
+const options = {
   fuzzyThreshold: 0.55,
   maxExpansion: 160,
   maxContraction: 0.45,
+};
+
+console.log("=== Alignment Configuration ===");
+console.log(`fuzzyThreshold: ${options.fuzzyThreshold}`);
+console.log(`maxExpansion: ${options.maxExpansion} characters`);
+console.log(`maxContraction: ${options.maxContraction} (${Math.round(options.maxContraction * 100)}%)`);
+console.log();
+
+const results = alignBeats(story, beatCandidates, options);
+
+console.log("=== Alignment Results ===");
+results.forEach((beat, index) => {
+  const matchType = beat.exact ? "EXACT MATCH" : "FUZZY MATCH";
+  const thresholdMet = beat.similarity >= options.fuzzyThreshold ? "✓" : "✗ (last beat exception)";
+  
+  console.log(`\nBeat ${index + 1}: ${beat.title || "Untitled"}`);
+  console.log(`Match Type: ${matchType}`);
+  console.log(`Similarity: ${beat.similarity.toFixed(3)} / ${options.fuzzyThreshold} ${thresholdMet}`);
+  console.log(`Position: [${beat.start}, ${beat.end}) (${beat.end - beat.start} chars)`);
+  console.log("\nOriginal script:");
+  console.log(`  "${beat.script}"`);
+  console.log("\nMatched text:");
+  console.log(`  "${beat.matchedText}"`);
 });
 
-console.log("Aligned beats:\n");
-for (const beat of results) {
-  console.log({
-    title: beat.title,
-    exact: beat.exact,
-    similarity: Number(beat.similarity.toFixed(3)),
-    start: beat.start,
-    end: beat.end,
-  });
-  console.log("Matched text:\n" + beat.matchedText + "\n");
-}
-
 const reconstructed = results.map((beat) => beat.matchedText).join("");
-console.log("Story fully reconstructed:", reconstructed === story);
+console.log("\n=== Summary ===");
+console.log(`Story fully reconstructed: ${reconstructed === story ? "✓" : "✗"}`);
+console.log(`Total beats: ${results.length}`);
+console.log(`Exact matches: ${results.filter(b => b.exact).length}`);
+console.log(`Fuzzy matches: ${results.filter(b => !b.exact).length}`);
+console.log(`Average similarity: ${(results.reduce((sum, b) => sum + b.similarity, 0) / results.length).toFixed(3)}`);
